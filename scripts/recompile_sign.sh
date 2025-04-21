@@ -1,16 +1,13 @@
 #!/bin/bash
 echo "[*] Recompiling APK..."
-apktool b insta_src -o mod_instagram_unsigned.apk
+apktool b insta_src -o mod_instagram-unsigned.apk
 
-echo "[*] Decoding keystore from secret..."
-echo "${KEYSTORE_BASE64}" | base64 -d > my-release-key.jks
-
-echo "[*] Signing APK..."
+echo "[*] Signing APK with custom release keystore..."
 jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
   -keystore my-release-key.jks \
-  -storepass "${KEYSTORE_PASSWORD}" \
-  -keypass "${KEY_ALIAS_PASSWORD}" \
-  mod_instagram_unsigned.apk "${KEY_ALIAS}"
+  -storepass myStrongPass123 \
+  -keypass myStrongPass123 \
+  mod_instagram-unsigned.apk my_alias
 
-mv mod_instagram_unsigned.apk mod_instagram.apk
-echo "[+] Signed: mod_instagram.apk"
+mv mod_instagram-unsigned.apk mod_instagram.apk
+echo "[+] Signed APK: mod_instagram.apk"
