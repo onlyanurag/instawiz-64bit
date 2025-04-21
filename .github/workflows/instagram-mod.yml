@@ -1,0 +1,47 @@
+name: Auto Instagram Alpha Mod
+
+on:
+  workflow_dispatch:  # Allows you to run manually from the GitHub UI
+  schedule:
+    - cron: '0 3 * * *'  # Runs daily at 3:00 AM UTC
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y apktool openjdk-17-jdk wget unzip
+          pip install beautifulsoup4 requests
+
+      - name: Run script to download APK
+        run: python3 download_apk.py
+
+      - name: Decompile APK
+        run: bash decompile.sh
+
+      - name: Patch smali
+        run: python3 patch_smali.py
+
+      - name: Add custom features (placeholder)
+        run: python3 add_features.py
+
+      - name: Build modified APK
+        run: |
+          bash recompile_sign.sh
+
+      - name: Upload modded APK artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: modded-instagram
+          path: mod_instagram.apk
